@@ -19,13 +19,15 @@ def collate_fn(dataset_items: List[dict]):
     result_batch["duration"] = list(x["duration"] for x in dataset_items)
     result_batch["audio_path"] = list(x["audio_path"] for x in dataset_items)
 
-    pad_text = max(list(x["text_encoded"].shape[-1] for x in dataset_items))
-    pad_spec = max(list(x["spectrogram"].shape[-1] for x in dataset_items))
+    result_batch["text_encoded_length"] = max(
+        list(x["text_encoded"].shape[-1] for x in dataset_items))
+    result_batch["spectrogram_length"] = max(
+        list(x["spectrogram"].shape[-1] for x in dataset_items))
 
     result_batch["text_encoded"] = torch.cat(
-        tuple(ConstantPad2d((0, pad_text - x["text_encoded"].shape[-1], 0, 0), 0)(x["text_encoded"]) for x in dataset_items))
+        tuple(ConstantPad2d((0, result_batch["text_encoded_length"] - x["text_encoded"].shape[-1], 0, 0), 0)(x["text_encoded"]) for x in dataset_items))
 
     result_batch["spectrogram"] = torch.cat(
-        tuple(ConstantPad2d((0, pad_spec - x["spectrogram"].shape[-1], 0, 0), 0)(x["spectrogram"]) for x in dataset_items))
+        tuple(ConstantPad2d((0,  result_batch["spectrogram_length"] - x["spectrogram"].shape[-1], 0, 0), 0)(x["spectrogram"]) for x in dataset_items))
 
     return result_batch
