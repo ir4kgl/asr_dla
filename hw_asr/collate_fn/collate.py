@@ -30,4 +30,8 @@ def collate_fn(dataset_items: List[dict]):
     result_batch["spectrogram"] = torch.cat(
         tuple(ConstantPad2d((0,  result_batch["spectrogram_length"] - x["spectrogram"].shape[-1], 0, 0), 0)(x["spectrogram"]) for x in dataset_items))
 
+    result_batch["text_encoded_length"] = torch.full(
+        (len(dataset_items),), result_batch["text_encoded_length"], dtype=torch.long)
+    result_batch["spectrogram_length"] = torch.full(
+        (len(dataset_items),), result_batch["spectrogram_length"], dtype=torch.long)
     return result_batch
