@@ -55,6 +55,8 @@ class CTCCharTextEncoder(CharTextEncoder):
                         new_hypos.append((prefix.text[:-1] + next_char, p))
                     else:
                         new_hypos.append((prefix.text + next_char, p))
-            hypos = list(sorted(new_hypos, key=lambda x: x.prob, reverse=True)[:beam_size])
-
+            hypos = list(sorted(new_hypos, key=lambda x: x.prob,
+                         reverse=True)[:beam_size])
+        for h in hypos:
+            h.text = h.text[:probs_length]
         return sorted(hypos, key=lambda x: x.prob, reverse=True)
