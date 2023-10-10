@@ -1,4 +1,4 @@
-from collections import Callable
+from collections.abc import Callable
 from typing import List
 
 import hw_asr.augmentations.spectrogram_augmentations
@@ -12,14 +12,16 @@ def from_configs(configs: ConfigParser):
     if "augmentations" in configs.config and "wave" in configs.config["augmentations"]:
         for aug_dict in configs.config["augmentations"]["wave"]:
             wave_augs.append(
-                configs.init_obj(aug_dict, hw_asr.augmentations.wave_augmentations)
+                configs.init_obj(
+                    aug_dict, hw_asr.augmentations.wave_augmentations)
             )
 
     spec_augs = []
     if "augmentations" in configs.config and "spectrogram" in configs.config["augmentations"]:
         for aug_dict in configs.config["augmentations"]["spectrogram"]:
             spec_augs.append(
-                configs.init_obj(aug_dict, hw_asr.augmentations.spectrogram_augmentations)
+                configs.init_obj(
+                    aug_dict, hw_asr.augmentations.spectrogram_augmentations)
             )
     return _to_function(wave_augs), _to_function(spec_augs)
 
