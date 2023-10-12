@@ -1,7 +1,7 @@
 from torch import nn
 from torch.nn import Sequential, Conv2d, Conv1d, BatchNorm2d, ReLU, GRU, Softmax, Linear
 
-from torch import unsqueeze, squeeze, randn
+from torch import unsqueeze, squeeze, randn, mean
 
 from hw_asr.base import BaseModel
 
@@ -52,12 +52,11 @@ class DeepSpeechModel(BaseModel):
         self.head = Sequential(
             ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
             Linear(gru_params["hidden_size"], n_class),
-            Softmax()
         )
 
     def forward(self, spectrogram, **batch):
         spectrogram_t = unsqueeze(spectrogram.transpose(1, 2), 1)
-        spectrogram_convolved = squeeze(self.conv_block(spectrogram_t), 1)
+        spectrogram_convolved = mean(self.conv_block(spectrogram_t), dim=1)
         h0 = randn(self.gru.num_layers, len(spectrogram), self.gru.hidden_size)
         gru_output, _ = self.gru(spectrogram_convolved, h0)
         logits = self.head(gru_output)
