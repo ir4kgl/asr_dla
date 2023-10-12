@@ -1,5 +1,5 @@
 {
-  "name": "one_batch_test",
+  "name": "deepspeech_test",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
@@ -18,7 +18,7 @@
     "args": {
       "n_feats": 128,
       "fc_hidden": 512,
-      "n_convs": 2,
+      "n_convs": 1,
       "conv_params": [
         {
           "in_channels": 1,
@@ -31,23 +31,11 @@
             2,
             2
           ]
-        },
-        {
-          "in_channels": 32,
-          "out_channels": 1,
-          "kernel_size": [
-            21,
-            11
-          ],
-          "stride": [
-            2,
-            1
-          ]
         }
       ],
       "gru_params": {
-        "input_size": 49,
-        "hidden_size": 128,
+        "input_size": 59,
+        "hidden_size": 512,
         "num_layers": 3,
         "batch_first": true
       },
@@ -89,7 +77,8 @@
   "optimizer": {
     "type": "SGD",
     "args": {
-      "lr": 1e-2
+      "lr": 1e-4,
+      "momentum": 0.9
     }
   },
   "loss": {
@@ -114,14 +103,14 @@
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 50,
+      "epochs": 20,
       "anneal_strategy": "cos",
-      "max_lr": 1e-2,
+      "max_lr": 5e-4,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 20,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
@@ -130,6 +119,6 @@
     "visualize": "wandb",
     "wandb_project": "asr_project",
     "len_epoch": 100,
-    "grad_norm_clip": 10
+    "grad_norm_clip": 100
   }
 }
