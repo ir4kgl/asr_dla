@@ -48,15 +48,20 @@ class CTCCharTextEncoder(CharTextEncoder):
 
             for next_ind, next_char in self.ind2char.items():
                 for prefix in hypos:
+                    if len(prefix.text) >= probs_length:
+                        new_hypos.append(Hypothesis(
+                            prefix.text[:probs_length], prefix.prob))
+                        continue
                     p = prefix.prob * probs[i][next_ind]
                     if len(prefix.text) > 0 and prefix.text[-1] == next_char:
-                        new_hypos.append((prefix.text, p))
+                        new_hypos.append(Hypothesis(prefix.text, p))
                     elif len(prefix.text) > 0 and prefix.text[-1] == self.EMPTY_TOK:
-                        new_hypos.append((prefix.text[:-1] + next_char, p))
+                        new_hypos.append(Hypothesis(
+                            prefix.text[:-1] + next_char, p))
                     else:
-                        new_hypos.append((prefix.text + next_char, p))
+                        new_hypos.append(Hypothesis(
+                            prefix.text + next_char, p))
             hypos = list(sorted(new_hypos, key=lambda x: x.prob,
                          reverse=True)[:beam_size])
-        for h in hypos:
-            h.text = h.text[:probs_length]
+
         return sorted(hypos, key=lambda x: x.prob, reverse=True)
