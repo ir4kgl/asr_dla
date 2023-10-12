@@ -56,13 +56,8 @@ class DeepSpeechModel(BaseModel):
 
     def forward(self, spectrogram, **batch):
         spectrogram_t = torch.unsqueeze(spectrogram.transpose(1, 2), 1)
-        spectrogram_convolved = torch.mean(
-            self.conv_block(spectrogram_t), dim=1)
-        h0 = torch.randn(self.gru.num_layers, len(
-            spectrogram), self.gru.hidden_size)
-        if torch.cuda.is_available():
-            h0 = h0.cuda()
-        gru_output, _ = self.gru(spectrogram_convolved, h0)
+        spectrogram_convolved = torch.mean(self.conv_block(spectrogram_t), 1)
+        gru_output, _ = self.gru(spectrogram_convolved)
         logits = self.head(gru_output)
         return {"logits": logits}
 
