@@ -214,12 +214,12 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
 
-        beam_search_hypos = []
-        for i in range(len(log_probs)):
-            beam_search_hypos.append(
-                self.text_encoder.ctc_beam_search(log_probs[i], log_probs_length[i], beam_size=10)[0])
+        # beam_search_hypos = []
+        # for i in range(len(log_probs)):
+        #     beam_search_hypos.append(
+        #         self.text_encoder.ctc_beam_search(log_probs[i], log_probs_length[i], beam_size=10)[0])
 
-        beam_search_pred = [hypo.text for hypo in beam_search_hypos]
+        # beam_search_pred = [hypo.text for hypo in beam_search_hypos]
 
         argmax_inds = log_probs.cpu().argmax(-1).numpy()
         argmax_inds = [
@@ -231,25 +231,26 @@ class Trainer(BaseTrainer):
         argmax_texts = [self.text_encoder.ctc_decode(
             inds) for inds in argmax_inds]
         tuples = list(zip(argmax_texts, text, argmax_texts_raw,
-                      audio_path, beam_search_pred))
+                      audio_path))
         shuffle(tuples)
         rows = {}
-        for pred, target, raw_pred, audio_path, bs in tuples[:examples_to_log]:
+        for pred, target, raw_pred, audio_path in tuples[:examples_to_log]:
             target = BaseTextEncoder.normalize_text(target)
             wer = calc_wer(target, pred) * 100
             cer = calc_cer(target, pred) * 100
 
-            wer_bs = calc_wer(target, bs) * 100
-            cer_bs = calc_cer(target, bs) * 100
+            # wer_bs = calc_wer(target, bs) * 100
+            # cer_bs = calc_cer(target, bs) * 100
 
             rows[Path(audio_path).name] = {
                 "target": target,
                 "raw prediction": raw_pred,
                 "predictions": pred,
+                # "bs predictions": bs,
                 "wer": wer,
                 "cer": cer,
-                "wer_bs": wer_bs,
-                "cer_bs": cer_bs,
+                # "wer_bs": wer_bs,
+                # "cer_bs": cer_bs,
             }
         self.writer.add_table(
             "predictions", pd.DataFrame.from_dict(rows, orient="index"))
