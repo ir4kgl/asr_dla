@@ -17,7 +17,6 @@
     "type": "DeepSpeechModel",
     "args": {
       "n_feats": 128,
-      "fc_hidden": 512,
       "n_convs": 2,
       "conv_params": [
         {
@@ -61,10 +60,10 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "dev-clean",
+            "part": "train-clean-100",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "limit": 10
+            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
           }
         }
       ]
@@ -76,10 +75,10 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "dev-clean",
+            "part": "test-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "limit": 10
+            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
           }
         }
       ]
