@@ -48,22 +48,31 @@ class DeepSpeechModel(BaseModel):
             conv_list.append(BatchNorm2d(conv_params[i]["out_channels"]))
             conv_list.append(ReLU())
         self.conv_block = Sequential(*conv_list)
-        self.gru = GRU(**gru_params)
+        self.gru = GRU(self.transform_input_freq(n_feats), **gru_params)
         self.head = Sequential(
             ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
             Linear(gru_params["hidden_size"], n_class),
         )
 
     def forward(self, spectrogram, **batch):
-        spectrogram_t = torch.unsqueeze(spectrogram.transpose(1, 2), 1)
-        spectrogram_convolved = torch.mean(self.conv_block(spectrogram_t), 1)
-        gru_output, _ = self.gru(spectrogram_convolved)
+        spectrogram_convolved = self.conv_block(
+            torch.unsqueeze(spectrogram, 1))
+        spectrogram_convolved = spectrogram_convolved.view(
+            spectrogram_convolved.shape[0], -1, spectrogram_convolved.shape[-1])
+        gru_output, _ = self.gru(spectrogram_convolved.transpose(1, 2))
         logits = self.head(gru_output)
         return {"logits": logits}
 
     def transform_input_lengths(self, input_lengths):
         output_lengths = input_lengths
         for i in range(self.n_convs):
-            filter, stride = self.conv_params[i]["kernel_size"][0], self.conv_params[i]["stride"][0]
+            filter, stride = self.conv_params[i]["kernel_size"][1], self.conv_params[i]["stride"][1]
             output_lengths = (output_lengths - filter) // stride + 1
         return output_lengths
+
+    def transform_input_freq(self, input_freq):
+        output_freq = input_freq
+        for i in range(self.n_convs):
+            filter, stride = self.conv_params[i]["kernel_size"][0], self.conv_params[i]["stride"][0]
+            output_freq = (output_freq - filter) // stride + 1
+        return output_freq * self.conv_params[-1]["out_channels"]
