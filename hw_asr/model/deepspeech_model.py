@@ -1,5 +1,5 @@
 from torch import nn
-from torch.nn import Sequential, Conv2d, Conv1d, BatchNorm1d, BatchNorm2d, GRU, ReLU, Linear
+from torch.nn import Sequential, Conv2d, Conv1d, BatchNorm1d, BatchNorm2d, GRU, ReLU, Linear, LayerNorm
 
 import torch
 
@@ -83,6 +83,7 @@ class DeepSpeechModel(BaseModel):
             self.transform_input_freq(n_feats), **gru_params)
         self.head = Sequential(
             ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
+            LayerNorm(gru_params["hidden_size"]),
             Linear(gru_params["hidden_size"], n_class),
         )
 
