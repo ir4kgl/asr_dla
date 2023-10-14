@@ -12,7 +12,7 @@ class GRU_block(nn.Module):
         self.activation = ReLU()
         self.bn = BatchNorm1d(input_size)
         self.rnn_block = GRU(input_size, hidden_size, num_layers=1,
-                             dropout=dropout, batch_first=batch_first)
+                             dropout=dropout, batch_first=batch_first, bidirectional=True)
 
     def forward(self, x):
         x = self.activation(self.bn(x))
@@ -31,7 +31,7 @@ class GRU_extended(nn.Module):
         for _ in range(num_layers):
             self.rnn.append(
                 GRU_block(input_size, hidden_size, dropout, batch_first))
-            input_size = hidden_size
+            input_size = 2 * hidden_size
         self.rnn = Sequential(*self.rnn)
 
     def forward(self, x):
@@ -83,8 +83,8 @@ class DeepSpeechModel(BaseModel):
             self.transform_input_freq(n_feats), **gru_params)
         self.head = Sequential(
             # ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
-            LayerNorm(gru_params["hidden_size"]),
-            Linear(gru_params["hidden_size"], n_class),
+            LayerNorm(2 * gru_params["hidden_size"]),
+            Linear(2 * gru_params["hidden_size"], n_class),
         )
 
     def forward(self, spectrogram, **batch):
