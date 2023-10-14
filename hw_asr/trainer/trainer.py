@@ -217,7 +217,7 @@ class Trainer(BaseTrainer):
         beam_search_pred = []
         for i in range(len(log_probs)):
             beam_search_pred.append(self.text_encoder.ctc_beam_search(
-                log_probs[i], log_probs_length[i], 3)[0][0])
+                log_probs[i], log_probs_length[i])[0][0])
 
         argmax_inds = log_probs.cpu().argmax(-1).numpy()
 
