@@ -8,7 +8,7 @@ from .char_text_encoder import CharTextEncoder
 
 class Hypothesis(NamedTuple):
     text: str
-    prob: float
+    last_is_empty: bool
 
 
 class CTCCharTextEncoder(CharTextEncoder):
@@ -39,29 +39,28 @@ class CTCCharTextEncoder(CharTextEncoder):
         assert len(probs.shape) == 2
         char_length, voc_size = probs.shape
         assert voc_size == len(self.ind2char)
-        hypos: List[Hypothesis] = []
 
-        hypos.append(Hypothesis('', 1.))
+        hypos = {}
+        zero_h = Hypothesis('', False)
+        hypos[zero_h] = 1.
 
-        for i in range(char_length):
-            new_hypos: List[Hypothesis] = []
+        for i in range(probs_length):
+            new_hypos = defaultdict(float)
 
             for next_ind, next_char in self.ind2char.items():
-                for prefix in hypos:
-                    if len(prefix.text) >= probs_length:
-                        new_hypos.append(Hypothesis(
-                            prefix.text[:probs_length], prefix.prob))
-                        continue
-                    p = prefix.prob * probs[i][next_ind]
-                    if len(prefix.text) > 0 and prefix.text[-1] == next_char:
-                        new_hypos.append(Hypothesis(prefix.text, p))
-                    elif len(prefix.text) > 0 and prefix.text[-1] == self.EMPTY_TOK:
-                        new_hypos.append(Hypothesis(
-                            prefix.text[:-1] + next_char, p))
+                for prefix in hypos.keys():
+                    p = hypos[prefix] * probs[i][next_ind]
+                    last_is_empty = (next_char == self.EMPTY_TOK)
+                    if last_is_empty:
+                        new_text = prefix.text
+                    elif len(prefix.text) >= 1 and prefix.text[-1] == next_char and (not prefix.last_is_empty):
+                        new_text = prefix.text
                     else:
-                        new_hypos.append(Hypothesis(
-                            prefix.text + next_char, p))
-            hypos = list(sorted(new_hypos, key=lambda x: x.prob,
+                        new_text = prefix.text + next_char
+                    h = Hypothesis(new_text, last_is_empty)
+                    new_hypos[h] += p
+
+            hypos = dict(sorted(new_hypos.items(), key=lambda x: x[1],
                          reverse=True)[:beam_size])
 
-        return sorted(hypos, key=lambda x: x.prob, reverse=True)
+        return sorted(hypos.items(), key=lambda x: x[1], reverse=True)[:beam_size]
