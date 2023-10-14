@@ -214,13 +214,10 @@ class Trainer(BaseTrainer):
         if self.writer is None:
             return
 
-        beam_search_hypos = []
+        beam_search_pred = []
         for i in range(len(log_probs)):
-            best_hypo = self.text_encoder.ctc_beam_search(
-                log_probs[i], log_probs_length[i], beam_size=3)[0][0]
-            beam_search_hypos.append(best_hypo)
-
-        beam_search_pred = [hypo.text for hypo in beam_search_hypos]
+            beam_search_pred.append(self.text_encoder.ctc_beam_search(
+                log_probs[i], log_probs_length[i], beam_size=3)[0][0])
 
         argmax_inds = log_probs.cpu().argmax(-1).numpy()
 
