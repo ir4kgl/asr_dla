@@ -1,9 +1,41 @@
 from torch import nn
-from torch.nn import Sequential, Conv2d, Conv1d, BatchNorm2d, ReLU, GRU, Softmax, Linear
+from torch.nn import Sequential, Conv2d, Conv1d, BatchNorm1d, BatchNorm2d, GRU, ReLU, Linear
 
 import torch
 
 from hw_asr.base import BaseModel
+
+
+class GRU_block(nn.Module):
+    def __init__(self, input_size, hidden_size, dropout=0., batch_first=True):
+        super().__init__()
+        self.activation = ReLU()
+        self.bn = BatchNorm1d(input_size)
+        self.rnn_block = GRU(input_size, hidden_size, num_layers=1,
+                             dropout=dropout, batch_first=batch_first)
+
+    def forward(self, x):
+        x = self.activation(self.bn(x))
+        x = self.rnn_block(x.transpose(1, 2))[0]
+        return x.transpose(1, 2)
+
+
+class GRU_extended(nn.Module):
+    """
+    GRU RNN with optional batch normalization not implemented in Pytorchs' GRU :(((
+    """
+
+    def __init__(self, input_size, hidden_size, num_layers, dropout=0., batch_first=True):
+        super().__init__()
+        self.rnn = []
+        for _ in range(num_layers):
+            self.rnn.append(
+                GRU_block(input_size, hidden_size, dropout, batch_first))
+            input_size = hidden_size
+        self.rnn = Sequential(*self.rnn)
+
+    def forward(self, x):
+        return self.rnn(x)
 
 
 class ConvLookahead(nn.Module):
@@ -22,9 +54,8 @@ class ConvLookahead(nn.Module):
         self.conv = Conv1d(d, d, kernel_size=t+1, padding=t, groups=d)
 
     def forward(self, x):
-        x_t = x.transpose(1, 2)
-        y_t = self.conv(x_t)[:, :, self.t:]
-        return y_t.transpose(1, 2)
+        y = self.conv(x)[:, :, self.t:]
+        return y.transpose(1, 2)
 
 
 class DeepSpeechModel(BaseModel):
@@ -48,19 +79,18 @@ class DeepSpeechModel(BaseModel):
             conv_list.append(BatchNorm2d(conv_params[i]["out_channels"]))
             conv_list.append(ReLU())
         self.conv_block = Sequential(*conv_list)
-        self.gru = GRU(self.transform_input_freq(n_feats), **gru_params)
+        self.gru = GRU_extended(
+            self.transform_input_freq(n_feats), **gru_params)
         self.head = Sequential(
             ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
             Linear(gru_params["hidden_size"], n_class),
         )
 
     def forward(self, spectrogram, **batch):
-        spectrogram_convolved = self.conv_block(
-            torch.unsqueeze(spectrogram, 1))
-        spectrogram_convolved = spectrogram_convolved.view(
-            spectrogram_convolved.shape[0], -1, spectrogram_convolved.shape[-1])
-        gru_output, _ = self.gru(spectrogram_convolved.transpose(1, 2))
-        logits = self.head(gru_output)
+        conv_out = self.conv_block(torch.unsqueeze(spectrogram, 1))
+        conv_out = conv_out.view(conv_out.shape[0], -1, conv_out.shape[-1])
+        gru_out = self.gru(conv_out)
+        logits = self.head(gru_out)
         return {"logits": logits}
 
     def transform_input_lengths(self, input_lengths):
