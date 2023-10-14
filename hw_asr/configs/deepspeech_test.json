@@ -17,7 +17,7 @@
     "type": "DeepSpeechModel",
     "args": {
       "n_feats": 128,
-      "n_convs": 1,
+      "n_convs": 2,
       "conv_params": [
         {
           "in_channels": 1,
@@ -30,11 +30,23 @@
             2,
             2
           ]
+        },
+        {
+          "in_channels": 32,
+          "out_channels": 32,
+          "kernel_size": [
+            21,
+            11
+          ],
+          "stride": [
+            2,
+            1
+          ]
         }
       ],
       "gru_params": {
-        "hidden_size": 64,
-        "num_layers": 3,
+        "hidden_size": 512,
+        "num_layers": 5,
         "batch_first": true
       },
       "lookahead_timesteps": 80
