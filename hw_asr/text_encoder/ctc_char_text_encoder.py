@@ -63,4 +63,4 @@ class CTCCharTextEncoder(CharTextEncoder):
             hypos = [Hypothesis(*x) for x in sorted(
                 new_hypos.items(), key=lambda x: x[1], reverse=True)]
 
-        return sorted(hypos, key=lambda x: x.prob, reverse=True)
+        return hypos
