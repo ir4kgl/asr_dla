@@ -82,7 +82,7 @@ class DeepSpeechModel(BaseModel):
         self.gru = GRU_extended(
             self.transform_input_freq(n_feats), **gru_params)
         self.head = Sequential(
-            ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
+            # ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
             LayerNorm(gru_params["hidden_size"]),
             Linear(gru_params["hidden_size"], n_class),
         )
@@ -91,7 +91,7 @@ class DeepSpeechModel(BaseModel):
         conv_out = self.conv_block(torch.unsqueeze(spectrogram, 1))
         conv_out = conv_out.view(conv_out.shape[0], -1, conv_out.shape[-1])
         gru_out = self.gru(conv_out)
-        logits = self.head(gru_out)
+        logits = self.head(gru_out.transpose(1, 2))
         return {"logits": logits}
 
     def transform_input_lengths(self, input_lengths):
