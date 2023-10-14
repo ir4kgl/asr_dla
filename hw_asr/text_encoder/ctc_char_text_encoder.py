@@ -42,9 +42,9 @@ class CTCCharTextEncoder(CharTextEncoder):
         hypos: List[Hypothesis] = []
 
         for ind, char in self.ind2char.items():
-            if char == self.EMPTY_TOK:
-                continue
             hypos.append(Hypothesis(char, probs[0][ind]))
+
+        hypos = sorted(hypos, key=lambda x: x.prob, reverse=True)
 
         for i in range(1, probs_length):
             new_hypos = defaultdict(float)
