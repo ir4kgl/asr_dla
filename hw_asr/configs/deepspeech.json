@@ -106,18 +106,6 @@
         "name": "CER (argmax)"
       }
     }
-    // {
-    //   "type": "BeamSearchCERMetric",
-    //   "args": {
-    //     "name": "CER (beam search)"
-    //   }
-    // },
-    // {
-    //   "type": "BeamSearchWERMetric",
-    //   "args": {
-    //     "name": "WER (beam search)"
-    //   }
-    // }
   ],
   "lr_scheduler": {
     "type": "OneCycleLR",
