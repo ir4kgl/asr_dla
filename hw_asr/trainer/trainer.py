@@ -94,6 +94,7 @@ class Trainer(BaseTrainer):
                     batch,
                     is_train=True,
                     metrics=self.train_metrics,
+                    epoch=epoch
                 )
             except RuntimeError as e:
                 if "out of memory" in str(e) and self.skip_oom:
@@ -134,7 +135,7 @@ class Trainer(BaseTrainer):
 
         return log
 
-    def process_batch(self, batch, is_train: bool, metrics: MetricTracker):
+    def process_batch(self, batch, is_train: bool, metrics: MetricTracker, epoch: int):
         batch = self.move_batch_to_device(batch, self.device)
         if is_train:
             self.optimizer.zero_grad()
@@ -158,7 +159,7 @@ class Trainer(BaseTrainer):
 
         metrics.update("loss", batch["loss"].item())
         for met in self.metrics:
-            if "beam search" in met.name and is_train:
+            if "beam search" in met.name and epoch % 10 != 0:
                 continue
             metrics.update(met.name, met(**batch))
         return batch
@@ -182,6 +183,7 @@ class Trainer(BaseTrainer):
                     batch,
                     is_train=False,
                     metrics=self.evaluation_metrics,
+                    epoch=epoch
                 )
             self.writer.set_step(epoch * self.len_epoch, part)
             self._log_scalars(self.evaluation_metrics)
