@@ -5,8 +5,7 @@
     "sr": 16000,
     "spectrogram": {
       "type": "MelSpectrogram",
-      "args": {
-      }
+      "args": {}
     },
     "log_spec": true
   },
@@ -127,7 +126,7 @@
   "trainer": {
     "epochs": 50,
     "save_dir": "saved/",
-    "save_period": 5,
+    "save_period": 1,
     "verbosity": 2,
     "monitor": "min val_loss",
     "early_stop": 100,
