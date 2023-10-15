@@ -1,0 +1,144 @@
+{
+    "name": "deepspeech_test",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 16000,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {}
+        },
+        "log_spec": true
+    },
+    "augmentations": {
+        "wave": [],
+        "spectrogram": []
+    },
+    "arch": {
+        "type": "DeepSpeechModel",
+        "args": {
+            "n_feats": 128,
+            "n_convs": 2,
+            "conv_params": [
+                {
+                    "in_channels": 1,
+                    "out_channels": 32,
+                    "kernel_size": [
+                        41,
+                        11
+                    ],
+                    "stride": [
+                        2,
+                        2
+                    ]
+                },
+                {
+                    "in_channels": 32,
+                    "out_channels": 32,
+                    "kernel_size": [
+                        21,
+                        11
+                    ],
+                    "stride": [
+                        2,
+                        1
+                    ]
+                }
+            ],
+            "gru_params": {
+                "hidden_size": 512,
+                "num_layers": 5,
+                "batch_first": true
+            },
+            "lookahead_timesteps": 80
+        }
+    },
+    "data": {
+        "train": {
+            "batch_size": 10,
+            "num_workers": 0,
+            "datasets": [
+                {
+                    "type": "LJspeechDataset",
+                    "args": {
+                        "part": "train",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 200
+                    }
+                }
+            ]
+        },
+        "val": {
+            "batch_size": 10,
+            "num_workers": 0,
+            "datasets": [
+                {
+                    "type": "LJspeechDataset",
+                    "args": {
+                        "part": "test",
+                        "max_audio_length": 20.0,
+                        "max_text_length": 200
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer": {
+        "type": "SGD",
+        "args": {
+            "lr": 1e-2,
+            "momentum": 0.9
+        }
+    },
+    "loss": {
+        "type": "CTCLoss",
+        "args": {}
+    },
+    "metrics": [
+        {
+            "type": "ArgmaxWERMetric",
+            "args": {
+                "name": "WER (argmax)"
+            }
+        },
+        {
+            "type": "ArgmaxCERMetric",
+            "args": {
+                "name": "CER (argmax)"
+            }
+        },
+        {
+            "type": "BeamSearchCERMetric",
+            "args": {
+                "name": "CER (beam search)"
+            }
+        },
+        {
+            "type": "BeamSearchWERMetric",
+            "args": {
+                "name": "WER (beam search)"
+            }
+        }
+    ],
+    "lr_scheduler": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 100,
+            "epochs": 50,
+            "anneal_strategy": "cos",
+            "max_lr": 1e-2,
+            "pct_start": 0.2
+        }
+    },
+    "trainer": {
+        "epochs": 50,
+        "save_dir": "saved/",
+        "save_period": 5,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 100,
+        "visualize": "wandb",
+        "wandb_project": "asr_project",
+        "len_epoch": 100,
+        "grad_norm_clip": 100
+    }
+}
