@@ -159,7 +159,7 @@ class Trainer(BaseTrainer):
 
         metrics.update("loss", batch["loss"].item())
         for met in self.metrics:
-            if "beam search" in met.name and epoch % 10 != 1:
+            if "beam search" in met.name and epoch % 20 != 1:
                 continue
             metrics.update(met.name, met(**batch))
         return batch
