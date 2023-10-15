@@ -17,14 +17,15 @@ class WanDBWriter:
             if config['trainer'].get('wandb_project') is None:
                 raise ValueError("please specify project name for wandb")
 
-            wandb.init(
+            self.run = wandb.init(
                 project=config['trainer'].get('wandb_project'),
                 config=config.config
             )
             self.wandb = wandb
 
         except ImportError:
-            logger.warning("For use wandb install it via \n\t pip install wandb")
+            logger.warning(
+                "For use wandb install it via \n\t pip install wandb")
 
         self.step = 0
         self.mode = ""
@@ -87,6 +88,11 @@ class WanDBWriter:
     def add_table(self, table_name, table: pd.DataFrame):
         self.wandb.log({self._scalar_name(table_name): wandb.Table(dataframe=table)},
                        step=self.step)
+
+    def save_model(self, path):
+        artifact = wandb.Artifact('model', type='model')
+        artifact.add_file(path)
+        self.run.log_artifact(artifact)
 
     def add_images(self, scalar_name, images):
         raise NotImplementedError()
