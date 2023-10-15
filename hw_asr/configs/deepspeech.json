@@ -105,20 +105,32 @@
       "args": {
         "name": "CER (argmax)"
       }
+    },
+    {
+      "type": "BeamSearchCERMetric",
+      "args": {
+        "name": "CER (beam search)"
+      }
+    },
+    {
+      "type": "BeamSearchWERMetric",
+      "args": {
+        "name": "WER (beam search)"
+      }
     }
   ],
   "lr_scheduler": {
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 50,
+      "epochs": 101,
       "anneal_strategy": "cos",
       "max_lr": 1e-2,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 50,
+    "epochs": 101,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
