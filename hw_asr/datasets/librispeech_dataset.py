@@ -27,7 +27,6 @@ URL_LINKS = {
 class LibrispeechDataset(BaseDataset):
     def __init__(self, part, data_dir=None, *args, **kwargs):
         assert part in URL_LINKS or part == 'train_all'
-        self._data_dir_working = Path("/kaggle/working/asr_dla/hw_asr/")
 
         if data_dir is None:
             data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
@@ -52,7 +51,7 @@ class LibrispeechDataset(BaseDataset):
         shutil.rmtree(str(self._data_dir / "LibriSpeech"))
 
     def _get_or_load_index(self, part):
-        index_path = self._data_dir_working / f"{part}_index.json"
+        index_path = self._data_dir / f"{part}_index.json"
         if index_path.exists():
             with index_path.open() as f:
                 index = json.load(f)
@@ -69,9 +68,7 @@ class LibrispeechDataset(BaseDataset):
             self._load_part(part)
 
         flac_dirs = set()
-        print("!", str(split_dir))
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
-            print("!", filenames)
             if any([f.endswith(".flac") for f in filenames]):
                 flac_dirs.add(dirpath)
         for flac_dir in tqdm(
