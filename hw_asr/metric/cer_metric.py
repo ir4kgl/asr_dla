@@ -36,7 +36,7 @@ class BeamSearchCERMetric(BaseMetric):
     def __call__(self, log_probs: Tensor, log_probs_length: Tensor, text: List[str], **kwargs):
         cers = []
         lengths = log_probs_length.detach().numpy()
-        for probs, length, target_text in zip(torch.exp(log_probs), lengths, text):
+        for probs, length, target_text in zip(torch.exp(log_probs).cpu(), lengths, text):
             target_text = CharTextEncoder.normalize_text(target_text)
             pred_text = self.text_encoder.ctc_beam_search(probs, length, 100)[
                 0][0]
