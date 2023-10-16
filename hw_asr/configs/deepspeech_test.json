@@ -64,7 +64,7 @@
             "max_audio_length": 20.0,
             "max_text_length": 200,
             "limit": 10,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "../data"
           }
         }
       ]
@@ -80,7 +80,7 @@
             "max_audio_length": 20.0,
             "max_text_length": 200,
             "limit": 10,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "../data"
           }
         }
       ]
