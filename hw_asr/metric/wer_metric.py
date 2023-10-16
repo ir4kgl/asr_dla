@@ -38,7 +38,7 @@ class BeamSearchWERMetric(BaseMetric):
         lengths = log_probs_length.detach().numpy()
         for probs, length, target_text in zip(torch.exp(log_probs), lengths, text):
             target_text = CharTextEncoder.normalize_text(target_text)
-            pred_text = self.text_encoder.ctc_beam_search(probs, length, 10)[
+            pred_text = self.text_encoder.ctc_beam_search(probs, length, 100)[
                 0][0]
             wers.append(calc_wer(target_text, pred_text))
         return sum(wers) / len(wers)
