@@ -78,6 +78,9 @@ class BaseTrainer:
         Full training logic
         """
         not_improved_count = 0
+        if self.epochs == 0:
+            result = self._train_epoch(-1)
+
         for epoch in range(self.start_epoch, self.epochs + 1):
             self._last_epoch = epoch
             result = self._train_epoch(epoch)
