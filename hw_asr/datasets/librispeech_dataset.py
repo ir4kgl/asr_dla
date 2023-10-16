@@ -69,6 +69,7 @@ class LibrispeechDataset(BaseDataset):
             self._load_part(part)
 
         flac_dirs = set()
+        print(str(split_dir))
         for dirpath, dirnames, filenames in os.walk(str(split_dir)):
             if any([f.endswith(".flac") for f in filenames]):
                 flac_dirs.add(dirpath)
