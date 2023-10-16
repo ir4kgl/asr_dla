@@ -27,7 +27,7 @@ URL_LINKS = {
 class LibrispeechDataset(BaseDataset):
     def __init__(self, part, data_dir=None, *args, **kwargs):
         assert part in URL_LINKS or part == 'train_all'
-        self._data_dir_working = "/kaggle/working/asr_dla/hw_asr/"
+        self._data_dir_working = Path("/kaggle/working/asr_dla/hw_asr/")
 
         if data_dir is None:
             data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
