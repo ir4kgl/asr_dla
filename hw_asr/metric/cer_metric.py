@@ -38,6 +38,7 @@ class BeamSearchCERMetric(BaseMetric):
         lengths = log_probs_length.detach().numpy()
         for probs, length, target_text in zip(torch.exp(log_probs), lengths, text):
             target_text = CharTextEncoder.normalize_text(target_text)
-            pred_text = self.text_encoder.ctc_beam_search(probs, length)[0][0]
+            pred_text = self.text_encoder.ctc_beam_search(probs, length, 10)[
+                0][0]
             cers.append(calc_cer(target_text, pred_text))
         return sum(cers) / len(cers)
