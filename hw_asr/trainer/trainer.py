@@ -89,48 +89,46 @@ class Trainer(BaseTrainer):
         for batch_idx, batch in enumerate(
                 tqdm(self.train_dataloader, desc="train", total=self.len_epoch)
         ):
-            log = None
-            if epoch != -1:
-                try:
-                    batch = self.process_batch(
-                        batch,
-                        is_train=True,
-                        metrics=self.train_metrics,
-                        epoch=epoch
+            try:
+                batch = self.process_batch(
+                    batch,
+                    is_train=True,
+                    metrics=self.train_metrics,
+                    epoch=epoch
+                )
+            except RuntimeError as e:
+                if "out of memory" in str(e) and self.skip_oom:
+                    self.logger.warning("OOM on batch. Skipping batch.")
+                    for p in self.model.parameters():
+                        if p.grad is not None:
+                            del p.grad  # free some memory
+                    torch.cuda.empty_cache()
+                    continue
+                else:
+                    raise e
+            self.train_metrics.update("grad norm", self.get_grad_norm())
+            if batch_idx % self.log_step == 0:
+                self.writer.set_step(
+                    (epoch - 1) * self.len_epoch + batch_idx)
+                self.logger.debug(
+                    "Train Epoch: {} {} Loss: {:.6f}".format(
+                        epoch, self._progress(
+                            batch_idx), batch["loss"].item()
                     )
-                except RuntimeError as e:
-                    if "out of memory" in str(e) and self.skip_oom:
-                        self.logger.warning("OOM on batch. Skipping batch.")
-                        for p in self.model.parameters():
-                            if p.grad is not None:
-                                del p.grad  # free some memory
-                        torch.cuda.empty_cache()
-                        continue
-                    else:
-                        raise e
-                self.train_metrics.update("grad norm", self.get_grad_norm())
-                if batch_idx % self.log_step == 0:
-                    self.writer.set_step(
-                        (epoch - 1) * self.len_epoch + batch_idx)
-                    self.logger.debug(
-                        "Train Epoch: {} {} Loss: {:.6f}".format(
-                            epoch, self._progress(
-                                batch_idx), batch["loss"].item()
-                        )
-                    )
-                    self.writer.add_scalar(
-                        "learning rate", self.lr_scheduler.get_last_lr()[0]
-                    )
-                    self._log_predictions(**batch)
-                    self._log_spectrogram(batch["spectrogram"])
-                    self._log_scalars(self.train_metrics)
-                    # we don't want to reset train metrics at the start of every epoch
-                    # because we are interested in recent train metrics
-                    last_train_metrics = self.train_metrics.result()
-                    self.train_metric_evaluation_epochs.reset()
-                if batch_idx >= self.len_epoch:
-                    break
-                log = last_train_metrics
+                )
+                self.writer.add_scalar(
+                    "learning rate", self.lr_scheduler.get_last_lr()[0]
+                )
+                self._log_predictions(**batch)
+                self._log_spectrogram(batch["spectrogram"])
+                self._log_scalars(self.train_metrics)
+                # we don't want to reset train metrics at the start of every epoch
+                # because we are interested in recent train metrics
+                last_train_metrics = self.train_metrics.result()
+                self.train_metrics.reset()
+            if batch_idx >= self.len_epoch:
+                break
+        log = last_train_metrics
 
         for part, dataloader in self.evaluation_dataloaders.items():
             val_log = self._evaluation_epoch(epoch, part, dataloader)
@@ -224,7 +222,7 @@ class Trainer(BaseTrainer):
         probs = torch.exp(log_probs)
         for i in range(len(log_probs)):
             beam_search_pred.append(self.text_encoder.ctc_beam_search(
-                probs[i], log_probs_length[i])[0][0])
+                probs[i], log_probs_length[i])[0][0], 3)
 
         argmax_inds = log_probs.cpu().argmax(-1).numpy()
 
