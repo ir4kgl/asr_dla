@@ -90,12 +90,15 @@ class ConfigParser:
         if args.config and resume:
             # update new config for fine-tuning
             config.update(read_json(args.config))
+        if args.config and load:
+            # update new config for fine-tuning
+            config.update(read_json(args.config))
 
         # parse custom cli options into dictionary
         modification = {
             opt.target: getattr(args, _get_opt_name(opt.flags)) for opt in options
         }
-        return cls(config, resume, modification)
+        return cls(config, resume, load, modification)
 
     @staticmethod
     def init_obj(obj_dict, default_module, *args, **kwargs):
