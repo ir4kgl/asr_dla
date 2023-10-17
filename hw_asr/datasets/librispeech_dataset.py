@@ -101,7 +101,7 @@ class LibrispeechDatasetKaggle(BaseDataset):
             data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
             data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = Path(data_dir)
-        self._index_dir = "/kaggle/working/"
+        self._index_dir = Path("/kaggle/working/")
         if part == 'train_all':
             index = sum([self._get_or_load_index(part)
                          for part in URL_LINKS if 'train' in part], [])
