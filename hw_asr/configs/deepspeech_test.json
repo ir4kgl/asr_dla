@@ -11,13 +11,36 @@
   },
   "augmentations": {
     "wave": [
-      "Gain",
-      "AddBackgroundNoise",
-      "PitchShift"
+      {
+        "type": "Gain",
+        "args": {}
+      },
+      {
+        "type": "AddBackgroundNoise",
+        "args": {}
+      },
+      {
+        "type": "PitchShift",
+        "args": {}
+      }
     ],
     "spectrogram": [
-      "TimeStretch",
-      "SpecMasking"
+      {
+        "type": "TimeStretch",
+        "args": {}
+      },
+      {
+        "type": "TimeMasking",
+        "args": {
+          "time_mask": 200
+        }
+      },
+      {
+        "type": "FreqMasking",
+        "args": {
+          "freq_mask": 50
+        }
+      }
     ]
   },
   "arch": {
