@@ -97,6 +97,7 @@ class LibrispeechDataset(BaseDataset):
 
 class LibrispeechDatasetKaggle(BaseDataset):
     def __init__(self, part, data_dir=None, *args, **kwargs):
+        print("!!!!")
         assert part in URL_LINKS or part == 'train_all'
 
         if data_dir is None:
