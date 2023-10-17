@@ -11,7 +11,20 @@
   },
   "augmentations": {
     "wave": [],
-    "spectrogram": []
+    "spectrogram": [
+      {
+        "type": "TimeMasking",
+        "args": {
+          "time_mask_param": 100
+        }
+      },
+      {
+        "type": "FrequencyMasking",
+        "args": {
+          "freq_mask_param": 50
+        }
+      }
+    ]
   },
   "arch": {
     "type": "DeepSpeechModel",
