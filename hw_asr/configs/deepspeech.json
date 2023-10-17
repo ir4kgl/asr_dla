@@ -10,18 +10,7 @@
     "log_spec": true
   },
   "augmentations": {
-    "wave": [
-      {
-        "type": "Gain",
-        "args": {}
-      },
-      {
-        "type": "PitchShift",
-        "args": {
-          "sample_rate": 16000
-        }
-      }
-    ],
+    "wave": [],
     "spectrogram": [
       {
         "type": "TimeMasking",
