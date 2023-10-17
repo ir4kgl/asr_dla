@@ -97,7 +97,6 @@ class LibrispeechDataset(BaseDataset):
 
 class LibrispeechDatasetKaggle(BaseDataset):
     def __init__(self, part, data_dir=None, *args, **kwargs):
-        print("!!!!")
         assert part in URL_LINKS or part == 'train_all'
 
         if data_dir is None:
@@ -125,7 +124,6 @@ class LibrispeechDatasetKaggle(BaseDataset):
 
     def _get_or_load_index(self, part):
         index_path = self._index_dir / f"{part}_index.json"
-        print(index_path)
         if index_path.exists():
             with index_path.open() as f:
                 index = json.load(f)
@@ -142,7 +140,6 @@ class LibrispeechDatasetKaggle(BaseDataset):
         print(texts_dir)
 
         for dirpath, dirnames, filenames in tqdm(os.walk(str(texts_dir))):
-            print(f)
             for f in filenames:
                 if not f.endswith(".trans.txt"):
                     continue
