@@ -124,6 +124,7 @@ class LibrispeechDatasetKaggle(BaseDataset):
 
     def _get_or_load_index(self, part):
         index_path = self._index_dir / f"{part}_index.json"
+        print(index_path)
         if index_path.exists():
             with index_path.open() as f:
                 index = json.load(f)
