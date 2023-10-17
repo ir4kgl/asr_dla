@@ -22,6 +22,7 @@ class ConfigParser:
         :param config: Dict containing configurations, hyperparameters for training.
                        contents of `config.json` file for example.
         :param resume: String, path to the checkpoint being loaded.
+        :param load_chp: String, path to the checkpoint being loaded.
         :param modification: Dict {keychain: value}, specifying position values to be replaced
                              from config dict.
         :param run_id: Unique Identifier for training processes.
@@ -52,7 +53,8 @@ class ConfigParser:
 
         # configure logging module
         setup_logging(self.log_dir)
-        self.log_levels = {0: logging.WARNING, 1: logging.INFO, 2: logging.DEBUG}
+        self.log_levels = {0: logging.WARNING,
+                           1: logging.INFO, 2: logging.DEBUG}
 
     @classmethod
     def from_args(cls, args, options=""):
