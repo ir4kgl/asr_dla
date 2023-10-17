@@ -82,12 +82,12 @@
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDatasetKaggle",
+          "type": "LibrispeechDataset",
           "args": {
             "part": "train-clean-100",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "/kaggle/input/librispeech/train-clean-100/LibriSpeech"
           }
         }
       ]
@@ -97,12 +97,12 @@
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDatasetKaggle",
+          "type": "LibrispeechDataset",
           "args": {
             "part": "test-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "/kaggle/input/librispeech/test-clean/LibriSpeech"
           }
         }
       ]
