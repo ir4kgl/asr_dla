@@ -34,7 +34,7 @@
         }
       },
       {
-        "type": "FreqMasking",
+        "type": "FrequencyMasking",
         "args": {
           "freq_mask_param": 50
         }
