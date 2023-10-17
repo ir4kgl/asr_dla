@@ -10,8 +10,15 @@
     "log_spec": true
   },
   "augmentations": {
-    "wave": [],
-    "spectrogram": []
+    "wave": [
+      "Gain",
+      "AddBackgroundNoise",
+      "PitchShift"
+    ],
+    "spectrogram": [
+      "TimeStretch",
+      "SpecMasking"
+    ]
   },
   "arch": {
     "type": "DeepSpeechModel",
