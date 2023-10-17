@@ -135,8 +135,10 @@ class LibrispeechDatasetKaggle(BaseDataset):
         index = []
         split_dir = self._data_dir / part
         texts_dir = self._data_dir / 'meta' / part
+        print(texts_dir)
 
         for dirpath, dirnames, filenames in tqdm(os.walk(str(texts_dir))):
+            print(f)
             for f in filenames:
                 if not f.endswith(".trans.txt"):
                     continue
