@@ -73,10 +73,10 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "train-clean-100",
+            "part": "train-other-500",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "data_dir": "/kaggle/input/librispeech/train-clean-100/LibriSpeech"
+            "data_dir": "/kaggle/input/librispeech/train-other-500/LibriSpeech"
           }
         }
       ]
