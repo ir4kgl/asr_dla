@@ -26,7 +26,8 @@
       {
         "type": "TimeStretch",
         "args": {
-          "fixed_rate": 16000
+          "fixed_rate": 16000,
+          "n_freq": 128
         }
       },
       {
