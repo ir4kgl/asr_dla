@@ -24,10 +24,15 @@
     ],
     "spectrogram": [
       {
-        "type": "TimeStretch",
+        "type": "TimeMasking",
         "args": {
-          "fixed_rate": 16000,
-          "n_freq": 128
+          "time_mask_param": 200
+        }
+      },
+      {
+        "type": "FrequencyMasking",
+        "args": {
+          "freq_mask_param": 50
         }
       }
     ]
