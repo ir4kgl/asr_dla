@@ -58,7 +58,7 @@
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDataset",
+          "type": "LibrispeechDatasetKaggle",
           "args": {
             "part": "dev-clean",
             "max_audio_length": 20.0,
@@ -74,7 +74,7 @@
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDataset",
+          "type": "LibrispeechDatasetKaggle",
           "args": {
             "part": "dev-clean",
             "max_audio_length": 20.0,
@@ -108,18 +108,6 @@
       "type": "ArgmaxCERMetric",
       "args": {
         "name": "CER (argmax)"
-      }
-    },
-    {
-      "type": "BeamSearchCERMetric",
-      "args": {
-        "name": "CER (beam search)"
-      }
-    },
-    {
-      "type": "BeamSearchWERMetric",
-      "args": {
-        "name": "WER (beam search)"
       }
     }
   ],
