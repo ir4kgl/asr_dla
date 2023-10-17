@@ -25,7 +25,9 @@
     "spectrogram": [
       {
         "type": "TimeStretch",
-        "args": {}
+        "args": {
+          "fixed_rate": 16000
+        }
       },
       {
         "type": "TimeMasking",
