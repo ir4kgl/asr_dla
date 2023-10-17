@@ -142,9 +142,9 @@ class LibrispeechDatasetKaggle(BaseDataset):
             for file in filenames:
                 if not file.endswith(".trans.txt"):
                     continue
-                translate_path = dirpath / file
+                translate_path = f"{dirpath}/{file}"
 
-                with translate_path.open() as f:
+                with Path(translate_path).open() as f:
                     for line in f:
                         f_id = line.split()[0]
                         f_text = " ".join(line.split()[1:]).strip()
