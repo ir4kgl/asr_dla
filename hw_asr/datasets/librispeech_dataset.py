@@ -65,6 +65,7 @@ class LibrispeechDataset(BaseDataset):
         index = []
         split_dir = self._data_dir / part
         if not split_dir.exists():
+            print("??")
             self._load_part(part)
 
         flac_dirs = set()
