@@ -30,7 +30,7 @@
       {
         "type": "TimeMasking",
         "args": {
-          "freq_mask_param": 200
+          "time_mask_param": 200
         }
       },
       {
