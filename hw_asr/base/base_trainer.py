@@ -56,8 +56,8 @@ class BaseTrainer:
         if config.resume is not None:
             self._resume_checkpoint(config.resume)
 
-        if config.load_chp is not None:
-            self._load_checkpoint(config.load_chp)
+        if config.load is not None:
+            self._load_checkpoint(config.load)
 
     @abstractmethod
     def _train_epoch(self, epoch):

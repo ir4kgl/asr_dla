@@ -15,14 +15,14 @@ from hw_asr.utils import read_json, write_json, ROOT_PATH
 
 
 class ConfigParser:
-    def __init__(self, config, resume=None, load_chp=None, modification=None, run_id=None):
+    def __init__(self, config, resume=None, load=None, modification=None, run_id=None):
         """
         class to parse configuration json file. Handles hyperparameters for training,
         initializations of modules, checkpoint saving and logging module.
         :param config: Dict containing configurations, hyperparameters for training.
                        contents of `config.json` file for example.
         :param resume: String, path to the checkpoint being loaded.
-        :param load_chp: String, path to the checkpoint being loaded.
+        :param load: String, path to the checkpoint being loaded.
         :param modification: Dict {keychain: value}, specifying position values to be replaced
                              from config dict.
         :param run_id: Unique Identifier for training processes.
@@ -31,7 +31,7 @@ class ConfigParser:
         # load config file and apply modification
         self._config = _update_config(config, modification)
         self.resume = resume
-        self.load_chp = load_chp
+        self.load = load
         self._text_encoder = None
 
         # set save_dir where trained model and log will be saved.
@@ -77,7 +77,15 @@ class ConfigParser:
             assert args.config is not None, msg_no_cfg
             resume = None
             cfg_fname = Path(args.config)
-
+        if args.load is not None:
+            load = Path(args.load)
+            cfg_fname = load.parent / "config.json"
+        else:
+            msg_no_cfg = "Configuration file need to be specified. " \
+                         "Add '-c config.json', for example."
+            assert args.config is not None, msg_no_cfg
+            load = None
+            cfg_fname = Path(args.config)
         config = read_json(cfg_fname)
         if args.config and resume:
             # update new config for fine-tuning
