@@ -16,10 +16,6 @@
         "args": {}
       },
       {
-        "type": "AddBackgroundNoise",
-        "args": {}
-      },
-      {
         "type": "PitchShift",
         "args": {}
       }
