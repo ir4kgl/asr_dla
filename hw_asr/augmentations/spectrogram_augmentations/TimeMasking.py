@@ -5,9 +5,9 @@ from torch import Tensor
 from hw_asr.augmentations.base import AugmentationBase
 
 
-class TimeStretch(AugmentationBase):
+class TimeMasking(AugmentationBase):
     def __init__(self, *args, **kwargs):
-        self._aug = torchaudio.transforms.TimeStretch(*args, **kwargs)
+        self._aug = torchaudio.transforms.TimeMasking(*args, **kwargs),
 
     def __call__(self, data: Tensor):
         return self._aug(data)
