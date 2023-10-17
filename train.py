@@ -33,7 +33,8 @@ def main(config):
     dataloaders = get_dataloaders(config, text_encoder)
 
     # build model architecture, then print to console
-    model = config.init_obj(config["arch"], module_arch, n_class=len(text_encoder))
+    model = config.init_obj(
+        config["arch"], module_arch, n_class=len(text_encoder))
     logger.info(model)
 
     # prepare for (multi-device) GPU training
@@ -52,8 +53,10 @@ def main(config):
     # build optimizer, learning rate scheduler. delete every line containing lr_scheduler for
     # disabling scheduler
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-    optimizer = config.init_obj(config["optimizer"], torch.optim, trainable_params)
-    lr_scheduler = config.init_obj(config["lr_scheduler"], torch.optim.lr_scheduler, optimizer)
+    optimizer = config.init_obj(
+        config["optimizer"], torch.optim, trainable_params)
+    lr_scheduler = config.init_obj(
+        config["lr_scheduler"], torch.optim.lr_scheduler, optimizer)
 
     trainer = Trainer(
         model,
@@ -88,6 +91,13 @@ if __name__ == "__main__":
         help="path to latest checkpoint (default: None)",
     )
     args.add_argument(
+        "-l",
+        "--load",
+        default=None,
+        type=str,
+        help="path to the checkpoint (default: None)",
+    )
+    args.add_argument(
         "-d",
         "--device",
         default=None,
@@ -98,7 +108,8 @@ if __name__ == "__main__":
     # custom cli options to modify configuration from default values given in json file.
     CustomArgs = collections.namedtuple("CustomArgs", "flags type target")
     options = [
-        CustomArgs(["--lr", "--learning_rate"], type=float, target="optimizer;args;lr"),
+        CustomArgs(["--lr", "--learning_rate"],
+                   type=float, target="optimizer;args;lr"),
         CustomArgs(
             ["--bs", "--batch_size"], type=int, target="data_loader;args;batch_size"
         ),
