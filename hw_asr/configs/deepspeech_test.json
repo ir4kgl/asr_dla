@@ -29,18 +29,6 @@
           "fixed_rate": 16000,
           "n_freq": 128
         }
-      },
-      {
-        "type": "TimeMasking",
-        "args": {
-          "time_mask_param": 200
-        }
-      },
-      {
-        "type": "FrequencyMasking",
-        "args": {
-          "freq_mask_param": 50
-        }
       }
     ]
   },
@@ -89,13 +77,13 @@
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDatasetKaggle",
+          "type": "LibrispeechDataset",
           "args": {
             "part": "dev-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
             "limit": 10,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "../data"
           }
         }
       ]
@@ -105,13 +93,13 @@
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDatasetKaggle",
+          "type": "LibrispeechDataset",
           "args": {
             "part": "dev-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
             "limit": 10,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "../data"
           }
         }
       ]
