@@ -33,7 +33,8 @@ class BaseDataset(Dataset):
         self.log_spec = config_parser["preprocessing"]["log_spec"]
 
         self._assert_index_is_valid(index)
-        index = self._filter_records_from_dataset(index, max_audio_length, max_text_length, limit)
+        index = self._filter_records_from_dataset(
+            index, max_audio_length, max_text_length, limit)
         # it's a good idea to sort index by audio length
         # It would be easier to write length-based batch samplers later
         index = self._sort_index(index)
@@ -62,10 +63,12 @@ class BaseDataset(Dataset):
 
     def load_audio(self, path):
         audio_tensor, sr = torchaudio.load(path)
-        audio_tensor = audio_tensor[0:1, :]  # remove all channels but the first
+        # remove all channels but the first
+        audio_tensor = audio_tensor[0:1, :]
         target_sr = self.config_parser["preprocessing"]["sr"]
         if sr != target_sr:
-            audio_tensor = torchaudio.functional.resample(audio_tensor, sr, target_sr)
+            audio_tensor = torchaudio.functional.resample(
+                audio_tensor, sr, target_sr)
         return audio_tensor
 
     def process_wave(self, audio_tensor_wave: Tensor):
@@ -77,10 +80,10 @@ class BaseDataset(Dataset):
                 torchaudio.transforms,
             )
             audio_tensor_spec = wave2spec(audio_tensor_wave)
-            if self.spec_augs is not None:
-                audio_tensor_spec = self.spec_augs(audio_tensor_spec)
             if self.log_spec:
                 audio_tensor_spec = torch.log(audio_tensor_spec + 1e-5)
+            if self.spec_augs is not None:
+                audio_tensor_spec = self.spec_augs(audio_tensor_spec)
             return audio_tensor_wave, audio_tensor_spec
 
     @staticmethod
@@ -89,7 +92,8 @@ class BaseDataset(Dataset):
     ) -> list:
         initial_size = len(index)
         if max_audio_length is not None:
-            exceeds_audio_length = np.array([el["audio_len"] for el in index]) >= max_audio_length
+            exceeds_audio_length = np.array(
+                [el["audio_len"] for el in index]) >= max_audio_length
             _total = exceeds_audio_length.sum()
             logger.info(
                 f"{_total} ({_total / initial_size:.1%}) records are longer then "
@@ -101,10 +105,11 @@ class BaseDataset(Dataset):
         initial_size = len(index)
         if max_text_length is not None:
             exceeds_text_length = (
-                    np.array(
-                        [len(BaseTextEncoder.normalize_text(el["text"])) for el in index]
-                    )
-                    >= max_text_length
+                np.array(
+                    [len(BaseTextEncoder.normalize_text(el["text"]))
+                     for el in index]
+                )
+                >= max_text_length
             )
             _total = exceeds_text_length.sum()
             logger.info(
@@ -118,7 +123,8 @@ class BaseDataset(Dataset):
 
         if records_to_filter is not False and records_to_filter.any():
             _total = records_to_filter.sum()
-            index = [el for el, exclude in zip(index, records_to_filter) if not exclude]
+            index = [el for el, exclude in zip(
+                index, records_to_filter) if not exclude]
             logger.info(
                 f"Filtered {_total}({_total / initial_size:.1%}) records  from dataset"
             )
