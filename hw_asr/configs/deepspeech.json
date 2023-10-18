@@ -60,10 +60,10 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "train-clean-360",
+            "part": "train-other-500",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "data_dir": "/kaggle/input/librispeech/train-clean-360/LibriSpeech"
+            "data_dir": "/kaggle/input/librispeech/train-other-500/LibriSpeech"
           }
         }
       ]
@@ -87,7 +87,7 @@
   "optimizer": {
     "type": "SGD",
     "args": {
-      "lr": 1e-2,
+      "lr": 1e-3,
       "momentum": 0.9
     }
   },
@@ -113,14 +113,14 @@
     "type": "OneCycleLR",
     "args": {
       "steps_per_epoch": 100,
-      "epochs": 80,
+      "epochs": 150,
       "anneal_strategy": "cos",
-      "max_lr": 1e-2,
+      "max_lr": 1e-3,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 80,
+    "epochs": 150,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
