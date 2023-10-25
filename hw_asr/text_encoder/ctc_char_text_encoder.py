@@ -70,7 +70,7 @@ class CTCCharTextEncoder(CharTextEncoder):
 
 
 class CTCCharTextEncoderWithLM(CharTextEncoder):
-    EMPTY_TOK = "^"
+    EMPTY_TOK = ''
 
     def __init__(self, alphabet: List[str] = None, lm_path=None, alpha=0.5, beta=1.0):
         super().__init__(alphabet)
