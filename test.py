@@ -68,7 +68,7 @@ def main(config, out_file):
                     {
                         "ground_trurh": batch["text"][i],
                         "pred_text_argmax": text_encoder.ctc_decode(argmax.cpu().numpy()),
-                        "pred_beam_search": text_encoder_bs.ctc_beam_search(batch["probs"].numpy(), batch["log_probs_length"].cpu().numpy(), 1),
+                        "pred_beam_search": text_encoder_bs.ctc_beam_search(batch["probs"].numpy(), batch["log_probs_length"].cpu().numpy(), 100),
                     }
                 )
     with Path(out_file).open("w") as f:
