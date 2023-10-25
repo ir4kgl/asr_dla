@@ -55,7 +55,7 @@
   "data": {
     "test": {
       "batch_size": 20,
-      "num_workers": 4,
+      "num_workers": 0,
       "datasets": [
         {
           "type": "LibrispeechDataset",
