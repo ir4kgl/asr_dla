@@ -25,14 +25,14 @@ URL_LINKS = {
 
 
 class LibrispeechDataset(BaseDataset):
-    def __init__(self, part, data_dir=None, *args, **kwargs):
+    def __init__(self, part, data_dir=None, index_dir=None, *args, **kwargs):
         assert part in URL_LINKS or part == 'train_all'
 
         if data_dir is None:
             data_dir = ROOT_PATH / "data" / "datasets" / "librispeech"
             data_dir.mkdir(exist_ok=True, parents=True)
         self._data_dir = Path(data_dir)
-        self._index_dir = Path("/kaggle/working/")
+        self._index_dir = Path(index_dir)
         if part == 'train_all':
             index = sum([self._get_or_load_index(part)
                          for part in URL_LINKS if 'train' in part], [])
