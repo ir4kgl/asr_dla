@@ -24,6 +24,7 @@ def main(config, out_file):
 
     # text_encoder
     text_encoder = config.get_text_encoder()
+    text_encoder_bs = config.get_text_encoder_bs()
 
     # setup data_loader instances
     dataloaders = get_dataloaders(config, text_encoder)
@@ -67,9 +68,7 @@ def main(config, out_file):
                     {
                         "ground_trurh": batch["text"][i],
                         "pred_text_argmax": text_encoder.ctc_decode(argmax.cpu().numpy()),
-                        "pred_text_beam_search": text_encoder.ctc_beam_search(
-                            batch["probs"][i], batch["log_probs_length"][i], beam_size=10
-                        )[:10],
+                        "pred_beam_search": text_encoder_bs.ctc_beam_search(batch["probs"].numpy(), batch["log_probs_length"].cpu().numpy(), 100),
                     }
                 )
     with Path(out_file).open("w") as f:

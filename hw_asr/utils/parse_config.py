@@ -33,6 +33,7 @@ class ConfigParser:
         self.resume = resume
         self.load = load
         self._text_encoder = None
+        self._text_encoder_bs = None
 
         # set save_dir where trained model and log will be saved.
         save_dir = Path(self.config["trainer"]["save_dir"])
