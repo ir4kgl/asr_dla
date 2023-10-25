@@ -6,6 +6,10 @@ import torch
 from .char_text_encoder import CharTextEncoder
 
 
+from pyctcdecode import build_ctcdecoder
+import multiprocessing
+
+
 class Hypothesis(NamedTuple):
     text: str
     prob: float
@@ -63,3 +67,22 @@ class CTCCharTextEncoder(CharTextEncoder):
             hypos = [Hypothesis(*x) for x in sorted(
                 new_hypos.items(), key=lambda x: x[1], reverse=True)]
         return hypos
+
+
+class CTCCharTextEncoderWithLM(CharTextEncoder):
+    EMPTY_TOK = "^"
+
+    def __init__(self, alphabet: List[str] = None, lm_path=None, alpha=0.5, beta=1.0):
+        super().__init__(alphabet)
+        vocab = [self.EMPTY_TOK] + list(self.alphabet)
+        self.ind2char = dict(enumerate(vocab))
+        self.char2ind = {v: k for k, v in self.ind2char.items()}
+        self.decoder = build_ctcdecoder(
+            vocab, kenlm_model_path=lm_path, alpha=alpha, beta=beta)
+
+    def ctc_beam_search(self, probs, probs_length, beam_size):
+        logits_list = [p[:p_len]for p, p_len in zip(probs, probs_length)]
+        with multiprocessing.get_context("fork").Pool() as pool:
+            text_list = self.decoder.decode_batch(
+                pool, logits_list, beam_width=beam_size)
+        return text_list

@@ -10,7 +10,7 @@ from pathlib import Path
 from hw_asr import text_encoder as text_encoder_module
 from hw_asr.base.base_text_encoder import BaseTextEncoder
 from hw_asr.logger import setup_logging
-from hw_asr.text_encoder import CTCCharTextEncoder
+from hw_asr.text_encoder import CTCCharTextEncoder, CTCCharTextEncoderWithLM
 from hw_asr.utils import read_json, write_json, ROOT_PATH
 
 
@@ -159,6 +159,15 @@ class ConfigParser:
                 self._text_encoder = self.init_obj(self["text_encoder"],
                                                    default_module=text_encoder_module)
         return self._text_encoder
+
+    def get_text_encoder_bs(self) -> BaseTextEncoder:
+        if self._text_encoder_bs is None:
+            if "text_encoder_bs" not in self._config:
+                self._text_encoder_bs = CTCCharTextEncoderWithLM()
+            else:
+                self._text_encoder_bs = self.init_obj(self["text_encoder_bs"],
+                                                      default_module=text_encoder_module)
+        return self._text_encoder_bs
 
     # setting read-only attributes
     @property
