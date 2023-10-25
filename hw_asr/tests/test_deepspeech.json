@@ -63,7 +63,7 @@
             "part": "dev-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "data_dir": "/home/ira/Desktop/DLA/1/asr_dla/data/datasets/librispeech/dev-clean"
+            "data_dir": "/kaggle/input/librispeech/dev-clean"
           }
         }
       ]
@@ -72,7 +72,7 @@
   "text_encoder_bs": {
     "type": "CTCCharTextEncoderWithLM",
     "args": {
-      "lm_path": "/home/ira/Desktop/DLA/1/asr_dla/data/3-gram.pruned.1e-7.arpa.gz",
+      "lm_path": "/kaggle/working/3-gram.pruned.1e-7.arpa.gz",
       "alpha": 0.5,
       "beta": 1.0
     }
