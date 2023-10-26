@@ -73,7 +73,7 @@
     "type": "CTCCharTextEncoderWithLM",
     "args": {
       "lm_path": "/kaggle/working/3-gram.pruned.1e-7.arpa.gz",
-      "alpha": 0.5,
+      "alpha": 0.0,
       "beta": 1.0
     }
   }
