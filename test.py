@@ -11,7 +11,7 @@ from hw_asr.trainer import Trainer
 from hw_asr.utils import ROOT_PATH
 from hw_asr.utils.object_loading import get_dataloaders
 from hw_asr.utils.parse_config import ConfigParser
-
+from hw_asr.metric.utils import calc_wer, calc_cer
 
 DEFAULT_CHECKPOINT_PATH = ROOT_PATH / "default_test_model" / "checkpoint.pth"
 
@@ -46,6 +46,10 @@ def main(config, out_file):
     model.eval()
 
     results = []
+    wer_all = []
+    cer_all = []
+    wer_all_bs = []
+    cer_all_bs = []
 
     with torch.no_grad():
         for batch_num, batch in enumerate(tqdm(dataloaders["test"])):
@@ -66,13 +70,31 @@ def main(config, out_file):
             for i in range(len(batch["text"])):
                 argmax = batch["argmax"][i]
                 argmax = argmax[: int(batch["log_probs_length"][i])]
+                argmax_pred = text_encoder.ctc_decode(argmax.cpu().numpy())
                 results.append(
                     {
                         "ground_trurh": batch["text"][i],
-                        "pred_text_argmax": text_encoder.ctc_decode(argmax.cpu().numpy()),
+                        "pred_text_argmax": argmax_pred,
                         "pred_beam_search": batch["bs"][i],
+                        "wer_argm": calc_wer(batch["text"][i], argmax_pred),
+                        "cer_argm": calc_cer(batch["text"][i], argmax_pred),
+                        "wer_bs": calc_wer(batch["text"][i], batch["bs"][i]),
+                        "cer_bs": calc_cer(batch["text"][i], batch["bs"][i])
                     }
                 )
+                wer_all.append(results[-1]["wer_argm"])
+                cer_all.append(results[-1]["cer_argm"])
+                wer_all_bs.append(results[-1]["wer_bs"])
+                cer_all_bs.append(results[-1]["cer_bs"])
+    results.append({
+        "ground_trurh": "SUMMARY",
+        "pred_text_argmax": None,
+        "pred_beam_search": None,
+        "wer_argm": sum(wer_all) / len(wer_all),
+        "cer_argm": sum(cer_all) / len(cer_all),
+        "wer_bs": sum(wer_all_bs) / len(wer_all_bs),
+        "cer_bs": sum(cer_all_bs) / len(cer_all_bs)
+    })
     with Path(out_file).open("w") as f:
         json.dump(results, f, indent=2)
 
