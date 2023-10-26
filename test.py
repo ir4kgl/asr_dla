@@ -65,7 +65,7 @@ def main(config, out_file):
             )
             batch["probs"] = batch["log_probs"].exp().cpu()
             batch["argmax"] = batch["probs"].argmax(-1)
-            batch["bs"] = text_encoder_bs.ctc_beam_search(
+            batch["bs"] = text_encoder.ctc_beam_search(
                 batch["probs"].numpy(), batch["log_probs_length"].cpu().numpy(), 100)
             for i in range(len(batch["text"])):
                 argmax = batch["argmax"][i]
