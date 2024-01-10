@@ -24,7 +24,6 @@ def main(config, out_file):
 
     # text_encoder
     text_encoder = config.get_text_encoder()
-    text_encoder_bs = config.get_text_encoder_bs()
 
     # setup data_loader instances
     dataloaders = get_dataloaders(config, text_encoder)
