@@ -92,7 +92,7 @@ class CTCCharTextEncoderWithLM(CharTextEncoder):
         return ''.join(res)
 
     def ctc_beam_search(self, probs, probs_length, beam_size):
-        print(probs_length)
+
         logits_list = [p[:p_len]for p, p_len in zip(probs, probs_length)]
         with multiprocessing.get_context("fork").Pool(20) as pool:
             text_list = self.decoder.decode_batch(

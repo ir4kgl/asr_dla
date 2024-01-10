@@ -236,23 +236,25 @@ class Trainer(BaseTrainer):
                       audio_path, indices))
         shuffle(tuples)
 
+        tuples = tuples[:examples_to_log]
+        indices = torch.tensor(list(x[-1] for x in tuples))
+        bs = self.text_encoder.ctc_beam_search(
+                probs[indices], log_probs_length[indices], 100)
+
         rows = {}
-        for pred, target, raw_pred, audio_path, i in tuples[:examples_to_log]:
+        for i, (pred, target, raw_pred, audio_path, _) in enumerate(tuples):
             target = BaseTextEncoder.normalize_text(target)
             wer = calc_wer(target, pred) * 100
             cer = calc_cer(target, pred) * 100
 
-            bs = self.text_encoder.ctc_beam_search(
-                probs[i], log_probs_length[i], 100)[0][0]
-
-            wer_bs = calc_wer(target, bs) * 100
-            cer_bs = calc_cer(target, bs) * 100
+            wer_bs = calc_wer(target, bs[i]) * 100
+            cer_bs = calc_cer(target, bs[i]) * 100
 
             rows[Path(audio_path).name] = {
                 "target": target,
                 "raw prediction": raw_pred,
                 "predictions": pred,
-                "bs predictions": bs,
+                "bs predictions": bs[i],
                 "wer": wer,
                 "cer": cer,
                 "wer_bs": wer_bs,
