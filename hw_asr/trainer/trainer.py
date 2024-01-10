@@ -211,18 +211,15 @@ class Trainer(BaseTrainer):
             log_probs,
             log_probs_length,
             audio_path,
-            examples_to_log=10,
+            examples_to_log=5,
             *args,
             **kwargs,
     ):
         if self.writer is None:
             return
 
-        beam_search_pred = []
         probs = torch.exp(log_probs)
-        for i in range(len(log_probs)):
-            beam_search_pred.append(self.text_encoder.ctc_beam_search(
-                probs[i], log_probs_length[i], 3)[0][0])
+        indices = torch.arange(len(probs))
 
         argmax_inds = log_probs.cpu().argmax(-1).numpy()
 
@@ -234,15 +231,19 @@ class Trainer(BaseTrainer):
             inds) for inds in argmax_inds]
         argmax_texts = [self.text_encoder.ctc_decode(
             inds) for inds in argmax_inds]
+
         tuples = list(zip(argmax_texts, text, argmax_texts_raw,
-                      audio_path, beam_search_pred))
+                      audio_path, indices))
         shuffle(tuples)
 
         rows = {}
-        for pred, target, raw_pred, audio_path, bs in tuples[:examples_to_log]:
+        for pred, target, raw_pred, audio_path, i in tuples[:examples_to_log]:
             target = BaseTextEncoder.normalize_text(target)
             wer = calc_wer(target, pred) * 100
             cer = calc_cer(target, pred) * 100
+
+            bs = self.text_encoder.ctc_beam_search(
+                probs[i], log_probs_length[i], 100)[0][0]
 
             wer_bs = calc_wer(target, bs) * 100
             cer_bs = calc_cer(target, bs) * 100
