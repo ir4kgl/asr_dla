@@ -80,6 +80,9 @@ class CTCCharTextEncoderWithLM(CharTextEncoder):
         self.decoder = build_ctcdecoder(
             vocab, kenlm_model_path=lm_path, alpha=alpha, beta=beta)
 
+    def ctc_decode(self, inds: List[int]):
+        return super().ctc_decode(inds)
+
     def ctc_beam_search(self, probs, probs_length, beam_size):
         logits_list = [p[:p_len]for p, p_len in zip(probs, probs_length)]
         with multiprocessing.get_context("fork").Pool(20) as pool:
