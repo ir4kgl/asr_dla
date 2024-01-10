@@ -9,9 +9,6 @@
     },
     "log_spec": true
   },
-  "text_encoder": {
-    "type": "CTCCharTextEncoderWithLM"
-  },
   "augmentations": {
     "wave": [],
     "spectrogram": []
