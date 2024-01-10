@@ -238,6 +238,7 @@ class Trainer(BaseTrainer):
 
         tuples = tuples[:examples_to_log]
         indices = torch.tensor(list(x[-1] for x in tuples))
+
         bs = self.text_encoder.ctc_beam_search(
                 probs[indices], log_probs_length[indices], 100)
 
