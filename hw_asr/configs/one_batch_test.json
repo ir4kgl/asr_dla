@@ -10,7 +10,7 @@
     "log_spec": true
   },
   "text_encoder": {
-    "type": "CTCCharTextEncoder"
+    "type": "CTCCharTextEncoderWithLM"
   },
   "augmentations": {
     "wave": [],
