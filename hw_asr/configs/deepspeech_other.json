@@ -60,6 +60,24 @@
         {
           "type": "LibrispeechDataset",
           "args": {
+            "part": "train-clean-100",
+            "max_audio_length": 20.0,
+            "max_text_length": 200,
+            "data_dir": "/kaggle/input/librispeech/train-clean-100/LibriSpeech"
+          }
+        },
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "train-clean-360",
+            "max_audio_length": 20.0,
+            "max_text_length": 200,
+            "data_dir": "/kaggle/input/librispeech/train-clean-360/LibriSpeech"
+          }
+        },
+        {
+          "type": "LibrispeechDataset",
+          "args": {
             "part": "train-other-500",
             "max_audio_length": 20.0,
             "max_text_length": 200,
