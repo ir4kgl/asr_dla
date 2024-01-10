@@ -1,5 +1,5 @@
 from torch import nn
-from torch.nn import Sequential, Conv2d, Conv1d, BatchNorm1d, BatchNorm2d, GRU, ReLU, Linear, LayerNorm
+from torch.nn import Sequential, Conv2d, BatchNorm1d, BatchNorm2d, GRU, ReLU, Linear, LayerNorm
 
 import torch
 
