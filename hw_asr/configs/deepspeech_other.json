@@ -1,5 +1,5 @@
 {
-  "name": "deepspeech_test",
+  "name": "deepspeech_updated",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
@@ -54,7 +54,7 @@
   },
   "data": {
     "train": {
-      "batch_size": 10,
+      "batch_size": 50,
       "num_workers": 0,
       "datasets": [
         {
@@ -85,10 +85,9 @@
     }
   },
   "optimizer": {
-    "type": "SGD",
+    "type": "Adam",
     "args": {
-      "lr": 8e-3,
-      "momentum": 0.9
+      "lr": 3e-4
     }
   },
   "loss": {
@@ -115,20 +114,18 @@
       "steps_per_epoch": 100,
       "epochs": 100,
       "anneal_strategy": "cos",
-      "max_lr": 8e-3,
+      "max_lr": 3e-4,
       "pct_start": 0.2
     }
   },
   "trainer": {
-    "epochs": 100,
+    "epochs": 20,
     "save_dir": "saved/",
     "save_period": 5,
     "verbosity": 2,
     "monitor": "min val_loss",
-    "early_stop": 100,
     "visualize": "wandb",
     "wandb_project": "asr_project",
-    "len_epoch": 100,
     "grad_norm_clip": 100
   }
 }
