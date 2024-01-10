@@ -38,26 +38,6 @@ class GRU_extended(nn.Module):
         return self.rnn(x)
 
 
-class ConvLookahead(nn.Module):
-    """
-    Lookahead convolutional layer for DeepSpeech model.
-
-    Keyword arguments:
-    d -- dimention of sequence elements
-    t -- context size
-    """
-
-    def __init__(self, d, t):
-        super().__init__()
-        self.t = t
-        self.d = d
-        self.conv = Conv1d(d, d, kernel_size=t+1, padding=t, groups=d)
-
-    def forward(self, x):
-        y = self.conv(x)[:, :, self.t:]
-        return y.transpose(1, 2)
-
-
 class DeepSpeechModel(BaseModel):
     """
     DeepSpeech model.
@@ -82,7 +62,6 @@ class DeepSpeechModel(BaseModel):
         self.gru = GRU_extended(
             self.transform_input_freq(n_feats), **gru_params)
         self.head = Sequential(
-            # ConvLookahead(gru_params["hidden_size"], lookahead_timesteps),
             LayerNorm(2 * gru_params["hidden_size"]),
             Linear(2 * gru_params["hidden_size"], n_class),
         )
