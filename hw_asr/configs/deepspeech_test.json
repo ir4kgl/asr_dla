@@ -1,5 +1,5 @@
 {
-  "name": "deepspeech_test",
+  "name": "deepspeech_updated",
   "n_gpu": 1,
   "preprocessing": {
     "sr": 16000,
@@ -10,32 +10,8 @@
     "log_spec": true
   },
   "augmentations": {
-    "wave": [
-      {
-        "type": "Gain",
-        "args": {}
-      },
-      {
-        "type": "PitchShift",
-        "args": {
-          "sample_rate": 16000
-        }
-      }
-    ],
-    "spectrogram": [
-      {
-        "type": "TimeMasking",
-        "args": {
-          "time_mask_param": 200
-        }
-      },
-      {
-        "type": "FrequencyMasking",
-        "args": {
-          "freq_mask_param": 50
-        }
-      }
-    ]
+    "wave": [],
+    "spectrogram": []
   },
   "arch": {
     "type": "DeepSpeechModel",
@@ -77,49 +53,22 @@
     }
   },
   "data": {
-    "train": {
-      "batch_size": 10,
-      "num_workers": 0,
-      "datasets": [
-        {
-          "type": "LibrispeechDatasetKaggle",
-          "args": {
-            "part": "dev-clean",
-            "max_audio_length": 20.0,
-            "max_text_length": 200,
-            "limit": 10,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
-          }
-        }
-      ]
-    },
     "val": {
       "batch_size": 10,
       "num_workers": 0,
       "datasets": [
         {
-          "type": "LibrispeechDatasetKaggle",
+          "type": "LibrispeechDataset",
           "args": {
-            "part": "dev-clean",
+            "part": "test-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
-            "limit": 10,
-            "data_dir": "/kaggle/input/librispeech-asr-wav-dataset"
+            "data_dir": "/kaggle/input/librispeech/test-clean/LibriSpeech",
+            "index_dir": "/kaggle/working/"
           }
         }
       ]
     }
-  },
-  "optimizer": {
-    "type": "SGD",
-    "args": {
-      "lr": 1e-2,
-      "momentum": 0.9
-    }
-  },
-  "loss": {
-    "type": "CTCLoss",
-    "args": {}
   },
   "metrics": [
     {
@@ -134,27 +83,5 @@
         "name": "CER (argmax)"
       }
     }
-  ],
-  "lr_scheduler": {
-    "type": "OneCycleLR",
-    "args": {
-      "steps_per_epoch": 100,
-      "epochs": 51,
-      "anneal_strategy": "cos",
-      "max_lr": 1e-2,
-      "pct_start": 0.2
-    }
-  },
-  "trainer": {
-    "epochs": 51,
-    "save_dir": "saved/",
-    "save_period": 5,
-    "verbosity": 2,
-    "monitor": "min val_loss",
-    "early_stop": 100,
-    "visualize": "wandb",
-    "wandb_project": "asr_project",
-    "len_epoch": 100,
-    "grad_norm_clip": 100
-  }
+  ]
 }
