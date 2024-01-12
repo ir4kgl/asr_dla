@@ -83,5 +83,13 @@
         "name": "CER (argmax)"
       }
     }
-  ]
+  ],
+  "text_encoder":
+  {
+      "type": "CTCCharTextEncoderWithLM",
+      "args": {
+          "lm_path": "/kaggle/working/3-gram.pruned.1e-7.arpa"
+      }
+  }
 }
+
