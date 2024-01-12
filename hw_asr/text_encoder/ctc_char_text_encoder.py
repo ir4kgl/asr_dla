@@ -74,6 +74,7 @@ class CTCCharTextEncoderWithLM(CharTextEncoder):
 
     def __init__(self, alphabet: List[str] = None, lm_path=None, alpha=0.5, beta=1.0):
         super().__init__(alphabet)
+        print("Using LM {}".format(lm_path))
         vocab = [self.EMPTY_TOK] + list(self.alphabet)
         self.ind2char = dict(enumerate(vocab))
         self.char2ind = {v: k for k, v in self.ind2char.items()}
