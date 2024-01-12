@@ -60,7 +60,7 @@
         {
           "type": "LibrispeechDataset",
           "args": {
-            "part": "test-clean",
+            "part": "dev-clean",
             "max_audio_length": 20.0,
             "max_text_length": 200,
             "data_dir": "/kaggle/input/librispeech/dev-clean/LibriSpeech",
