@@ -131,5 +131,9 @@
     "visualize": "wandb",
     "wandb_project": "asr_project",
     "grad_norm_clip": 100
+  },
+  "text_encoder":
+  {
+    "type": "CTCCharTextEncoderWithLM"
   }
 }
