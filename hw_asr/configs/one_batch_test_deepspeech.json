@@ -134,6 +134,7 @@
   },
   "text_encoder":
   {
-    "type": "CTCCharTextEncoderWithLM"
+    "type": "CTCCharTextEncoderWithLM",
+    "args" : {}
   }
 }
