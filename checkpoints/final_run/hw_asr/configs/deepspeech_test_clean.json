@@ -1,0 +1,94 @@
+{
+  "name": "deepspeech_updated",
+  "n_gpu": 1,
+  "preprocessing": {
+    "sr": 16000,
+    "spectrogram": {
+      "type": "MelSpectrogram",
+      "args": {}
+    },
+    "log_spec": true
+  },
+  "augmentations": {
+    "wave": [],
+    "spectrogram": []
+  },
+  "arch": {
+    "type": "DeepSpeechModel",
+    "args": {
+      "n_feats": 128,
+      "n_convs": 2,
+      "conv_params": [
+        {
+          "in_channels": 1,
+          "out_channels": 32,
+          "kernel_size": [
+            41,
+            11
+          ],
+          "stride": [
+            2,
+            2
+          ]
+        },
+        {
+          "in_channels": 32,
+          "out_channels": 32,
+          "kernel_size": [
+            21,
+            11
+          ],
+          "stride": [
+            2,
+            1
+          ]
+        }
+      ],
+      "gru_params": {
+        "hidden_size": 512,
+        "num_layers": 5,
+        "batch_first": true
+      },
+      "lookahead_timesteps": 80
+    }
+  },
+  "data": {
+    "test": {
+      "batch_size": 10,
+      "num_workers": 0,
+      "datasets": [
+        {
+          "type": "LibrispeechDataset",
+          "args": {
+            "part": "test-clean",
+            "max_audio_length": 20.0,
+            "max_text_length": 200,
+            "data_dir": "data/librispeech/test-clean/LibriSpeech"
+          }
+        }
+      ]
+    }
+  },
+  "metrics": [
+    {
+      "type": "ArgmaxWERMetric",
+      "args": {
+        "name": "WER (argmax)"
+      }
+    },
+    {
+      "type": "ArgmaxCERMetric",
+      "args": {
+        "name": "CER (argmax)"
+      }
+    }
+  ],
+  "text_encoder":
+  {
+      "type": "CTCCharTextEncoderWithLM",
+      "args": {
+          "lm_path": "data/3-gram.pruned.1e-7.arpa"
+      }
+  }
+}
+
